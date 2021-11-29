@@ -15,12 +15,11 @@ for main_folder in main_folders:
     all_folders = {"": 0}
 
     for root, folders, files in os.walk(main_folder):
-        inner_root = root.split('\\', 1)
+        inner_root = root.replace('\\', '/').split('/', 1)
         if len(inner_root) > 1:
             inner_root = inner_root[1]
         else:
             inner_root = ""
-        # all_folders[inner_root] = len(all_folders)
         for folder in folders:
             folder_info = {}
             folder_info["name"] = folder
@@ -43,10 +42,9 @@ for main_folder in main_folders:
     os.makedirs("repacked", exist_ok=True)
 
 
-    total_size = 0
-    total_size += 8
+    total_size = 8
     total_size += len(folder_meta) * 0x21 * 4
-    total_size += len(file_meta) * (0x26) * 4
+    total_size += len(file_meta) * (0x21 + 5) * 4
     print("Total Header Size", hex(total_size))
     with open(os.path.join("repacked", main_folder + ".dat"), "wb") as f:
         f.write(struct.pack("<i", len(folder_meta)))
